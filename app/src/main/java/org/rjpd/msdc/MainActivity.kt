@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -45,7 +46,6 @@ import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.rjpd.msdc.databinding.ActivityMainBinding
 import timber.log.Timber
-import kotlin.toString
 import androidx.core.view.isVisible
 
 
@@ -83,6 +83,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var deviceAngleDetectorService: DeviceAngleDetectorService
 
+    private lateinit var gpsStatusReceiver: android.content.BroadcastReceiver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -102,6 +104,7 @@ class MainActivity : AppCompatActivity() {
 
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+        updateGpsText()
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         infoUtils = InfoUtils(this)
@@ -167,6 +170,14 @@ class MainActivity : AppCompatActivity() {
             cameraExecutor = Executors.newSingleThreadExecutor()
         }
 
+        gpsStatusReceiver = object : android.content.BroadcastReceiver() {
+            override fun onReceive(context: android.content.Context?, intent: Intent?) {
+                if (intent?.action == LocationManager.PROVIDERS_CHANGED_ACTION) {
+                    updateGpsText()
+                }
+            }
+        }
+
         orientationEventListener.enable()
         saveInstanceState(savedInstanceState)
     }
@@ -198,11 +209,23 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         cameraExecutor.shutdown()
         orientationEventListener.disable()
-        deviceAngleDetectorService?.stop()
+        deviceAngleDetectorService.stop()
 
         for ((intent, _) in services) {
             stopService(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val filter = android.content.IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
+        registerReceiver(gpsStatusReceiver, filter)
+        updateGpsText()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(gpsStatusReceiver)
     }
 
     private val orientationEventListener by lazy {
@@ -524,7 +547,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun disableInterfaceElements(){
-        deviceAngleDetectorService?.stop()
+        viewBinding.importantInformationLinearLayout.visibility = android.view.View.GONE
+        deviceAngleDetectorService.stop()
 
         viewBinding.settingsButton.isEnabled = false
         viewBinding.startStopButton.backgroundTintList = getColorStateList(R.color.purple_200)
@@ -533,10 +557,13 @@ class MainActivity : AppCompatActivity() {
         viewBinding.recordingTextview.text = getString(R.string.recording_status_recording)
         viewBinding.statusTextview.text = getString(R.string.status)
         viewBinding.statusTextview.visibility = android.view.View.INVISIBLE
+
+        viewBinding.gpsStatusTextView.visibility = android.view.View.INVISIBLE
     }
 
     private fun enableInterfaceElements() {
-        deviceAngleDetectorService?.start(viewBinding.angleTextview)
+        viewBinding.importantInformationLinearLayout.visibility = android.view.View.VISIBLE
+        deviceAngleDetectorService.start(viewBinding.angleTextview)
 
         viewBinding.settingsButton.isEnabled = true
         viewBinding.startStopButton.backgroundTintList = getColorStateList(R.color.red_700)
@@ -544,6 +571,7 @@ class MainActivity : AppCompatActivity() {
         viewBinding.startStopButton.isEnabled = true
         viewBinding.outputAndRecordingModeSettingsLinearLayout.visibility = android.view.View.VISIBLE
         viewBinding.statusTextview.visibility = android.view.View.VISIBLE
+        updateGpsText()
     }
 
     private fun generateMetadata() {
@@ -603,6 +631,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    private fun updateGpsText() {
+        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if (isGpsEnabled) {
+            viewBinding.gpsStatusTextView.text = getString(R.string.gps_is_on)
+            viewBinding.gpsStatusTextView.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_light))
+            viewBinding.gpsStatusTextView.visibility = android.view.View.VISIBLE
+        } else {
+            viewBinding.gpsStatusTextView.text = getString(R.string.gps_is_off)
+            viewBinding.gpsStatusTextView.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_light))
+            viewBinding.gpsStatusTextView.visibility = android.view.View.VISIBLE
+        }
     }
 
     companion object {

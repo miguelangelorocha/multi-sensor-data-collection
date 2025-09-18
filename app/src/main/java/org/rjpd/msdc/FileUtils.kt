@@ -135,17 +135,20 @@ fun listFiles(directory: File): MutableList<String> {
     return fileList
 }
 
-fun isFilesListValid(files: MutableList<String>, isAudioVideoMode: Boolean): Boolean {
+fun isFilesListValid(files: MutableList<String>, isAudioVideoMode: Boolean): MutableMap<String, Any> {
     val notFoundFiles = mutableListOf<String>()
+    val foundFiles = mutableListOf<String>()
     val validFilePatterns = mapOf(
-        ".*sensors\\.one.*" to "Sensor One",
-        ".*sensors\\.three.*" to "Sensor Three",
-        ".sensors\\.three\\.uncalibrated.*" to "Sensor Three Uncalibrated",
+        ".*sensors\\.one.csv" to "Sensor 1 axis",
+        ".*sensors\\.three.csv" to "Sensor 3 axes",
+        ".*sensors\\.three\\.uncalibrated.csv" to "Sensor 6 axes",
         ".*metadata\\.json" to "Metadata",
         ".*\\.mp4" to "Video",
-        ".*wifi.*" to "Wifi Network",
-        ".*cell.*" to "Cellular Network",
-        ".*audio.*" to "Audio"
+        ".*wifi.csv" to "Wi-Fi",
+        ".*cell.csv" to "Cellular",
+        ".*gps.csv" to "GPS",
+        ".*consumption.csv" to "Batery",
+        ".*audio.*" to "Audio",
     )
 
     for ((pattern, name) in validFilePatterns) {
@@ -154,18 +157,28 @@ fun isFilesListValid(files: MutableList<String>, isAudioVideoMode: Boolean): Boo
 
         if (!fileFound) {
             notFoundFiles.add(name)
+        } else {
+            foundFiles.add(name)
         }
     }
 
+    val validationResult: MutableMap<String, Any> = mutableMapOf(
+        "foundFiles" to foundFiles,
+        "notFoundFiles" to notFoundFiles
+    )
+
     if (isAudioVideoMode && notFoundFiles.contains("Video")) {
-        return false
+        validationResult["isValid"] = false
+        validationResult["errorMessage"] = "Video file is missing."
+    } else if (!isAudioVideoMode && notFoundFiles.contains("Audio")) {
+        validationResult["isValid"] = false
+        validationResult["errorMessage"] = "Audio file is missing."
+    } else {
+        validationResult["isValid"] = true
+        validationResult["errorMessage"] = ""
     }
 
-    if (!isAudioVideoMode && notFoundFiles.contains("Audio")) {
-        return false
-    }
-
-    return true
+    return validationResult
 }
 
 fun generateInstanceName(text: String): String {

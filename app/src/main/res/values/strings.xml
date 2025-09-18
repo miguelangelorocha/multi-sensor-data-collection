@@ -63,7 +63,7 @@
 
     <string name="preference_about_us">About us</string>
     <string name="preference_about_information_summary">Application information</string>
-    <string name="about_app_description">MultiSensor Data Collection is a mobile app that collects data from various sensors, including the accelerometer, gyroscope, geolocation, video camera, microphone, battery consumption, and more. It enables the creation of a synchronized dataset locally.\n\nAuthor: rafael.damaceno@ime.usp.br\nVersion: 1.1.0\nPrivacy Policy: https://github.com/rafaelpezzuto/multi-sensor-data-collection/blob/main/privacy-policy.md\nSource Code: https://github.com/rafaelpezzuto/multi-sensor-data-collection\n\nThis app is part of SideSeeing, a computer vision and machine learning project focused on developing methods for Urban Informatics applications.\n\nVisit our website: https://sites.usp.br/sideseeing.
+    <string name="about_app_description">MultiSensor Data Collection is a mobile app that collects data from various sensors, including the accelerometer, gyroscope, geolocation, video camera, microphone, battery consumption, and more. It enables the creation of a synchronized dataset locally.\n\nAuthor: rafael.damaceno@ime.usp.br\nVersion: 1.2.0\nPrivacy Policy: https://github.com/rafaelpezzuto/multi-sensor-data-collection/blob/main/privacy-policy.md\nSource Code: https://github.com/rafaelpezzuto/multi-sensor-data-collection\n\nThis app is part of SideSeeing, a computer vision and machine learning project focused on developing methods for Urban Informatics applications.\n\nVisit our website: https://sites.usp.br/sideseeing.
     </string>
 
     <string name="about_app_close">Close</string>
@@ -88,8 +88,7 @@
     <string name="status_move_video_file">Moving video file, please wait…</string>
     <string name="status_move_other_files">Moving other files, please wait…</string>
     <string name="status_compressing_data">Compressing data, please wait…</string>
-    <string name="status_success">Operation completed successfully. %1$s files have been saved.</string>
-    <string name="status_error">Something went wrong. An audio or video file is missing.</string>
+    <string name="status_success">Operation completed successfully. %1$d files have been saved:</string>
 
     <string name="output_dir_title">Output</string>
     <string name="dir_title">Directory</string>
@@ -105,4 +104,7 @@
     <string name="compact_on">ZIP generation for each collection is enabled</string>
     <string name="compact_off">ZIP generation for each collection is disabled</string>
     <string name="compact_title">Compact data</string>
+
+    <string name="gps_is_off">GPS is off</string>
+    <string name="gps_is_on">GPS is on</string>
 </resources>

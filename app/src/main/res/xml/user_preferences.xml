@@ -93,7 +93,7 @@
             android:max="160"
             app:seekBarIncrement="1"
             app:showSeekBarValue="true"
-            app:defaultValue="30" />
+            app:defaultValue="1" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/sensors">
@@ -113,7 +113,8 @@
 
         <SwitchPreference
             app:key="sensors"
-            app:title="@string/sensors_preference_category" />
+            app:title="@string/sensors_preference_category"
+            android:defaultValue="true" />
 
         <ListPreference
             app:defaultValue="3"
@@ -175,7 +176,7 @@
             android:max="60"
             app:seekBarIncrement="1"
             app:showSeekBarValue="true"
-            app:defaultValue="30" />
+            app:defaultValue="1" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/geolocation_preference_category">
@@ -195,7 +196,7 @@
             android:max="60"
             app:seekBarIncrement="1"
             app:showSeekBarValue="true"
-            app:defaultValue="15" />
+            app:defaultValue="1" />
     </PreferenceCategory>
 
 </PreferenceScreen>

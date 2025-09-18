@@ -397,10 +397,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun finishCollectionCheck(isValid: Boolean, filesSize:Int, deleteDirectory:Boolean, directory:File) {
+    fun formatFileList(files: List<String>): String {
+        if (files.isEmpty()) {
+            return ""
+        }
+        if (files.size == 1) {
+            return files.first()
+        }
+
+        val initialPart = files.dropLast(1).joinToString(", ")
+        val lastPart = files.last()
+
+        return "$initialPart, and $lastPart"
+    }
+
+    private fun finishCollectionCheck(fileValidationResult: MutableMap<String, Any>, deleteDirectory:Boolean, directory:File) {
+        val isValid = fileValidationResult["isValid"] as Boolean
+        val foundFiles = fileValidationResult["foundFiles"] as ArrayList<String>
+        val errorMessage = fileValidationResult["errorMessage"] as String
+
         if (isValid) {
             viewBinding.statusTextview.text = buildString {
-                append(getString(R.string.status_success, "$filesSize"))
+                append(getString(R.string.status_success, foundFiles.size))
+                append(" ")
+                append(formatFileList(foundFiles))
+                append(".")
             }
 
             if (deleteDirectory) {
@@ -409,7 +430,7 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             viewBinding.statusTextview.text = buildString {
-                append(getString(R.string.status_error))
+                append(errorMessage)
             }
         }
     }
@@ -481,16 +502,16 @@ class MainActivity : AppCompatActivity() {
                     if (zipJobResult) {
                         Timber.tag(TAG).d("Checking zip file.")
                         val files = listCompressedFiles(zipTargetFilename)
-                        val isValidFilesList = isFilesListValid(files, viewBinding.radioAudioVideo.isChecked)
-                        finishCollectionCheck(isValidFilesList, files.size, true, userDataInstancePath)
+                        val fileValidationResult = isFilesListValid(files, viewBinding.radioAudioVideo.isChecked)
+                        finishCollectionCheck(fileValidationResult, true, userDataInstancePath)
                     } else {
                         Timber.tag(TAG).d("The zip job is not ready.")
                     }
                 } else {
                     Timber.tag(TAG).d("Checking directory.")
                     val files = listFiles(userDataInstancePath)
-                    val isValidFilesList = isFilesListValid(files, viewBinding.radioAudioVideo.isChecked)
-                    finishCollectionCheck(isValidFilesList, files.size, false, userDataInstancePath)
+                    val fileValidationResult = isFilesListValid(files, viewBinding.radioAudioVideo.isChecked)
+                    finishCollectionCheck(fileValidationResult,  false, userDataInstancePath)
                 }
 
                 unlockScreenOrientation()
@@ -596,7 +617,7 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.CAMERA,
                 Manifest.permission.CHANGE_WIFI_STATE,
                 Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.READ_PHONE_STATE
+                Manifest.permission.READ_PHONE_STATE,
             ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)

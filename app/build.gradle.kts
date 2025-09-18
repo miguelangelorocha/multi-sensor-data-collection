@@ -1,18 +1,23 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 android {
     namespace = "org.rjpd.msdc"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.rjpd.msdc"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 34
-        versionName = "1.1.0"
+        targetSdk = 35
+        versionCode = 35
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -25,13 +30,6 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true
@@ -49,33 +47,32 @@ android {
 }
 
 dependencies {
-    implementation("androidx.camera:camera-core:1.4.1")
-    implementation("androidx.camera:camera-camera2:1.4.1")
-    implementation("androidx.camera:camera-lifecycle:1.4.1")
-    implementation("androidx.camera:camera-video:1.4.1")
-    implementation("androidx.camera:camera-view:1.4.1")
-    implementation("androidx.camera:camera-extensions:1.4.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    implementation(platform("androidx.compose:compose-bom:2025.03.00"))
+    implementation("androidx.camera:camera-core:1.5.0")
+    implementation("androidx.camera:camera-camera2:1.5.0")
+    implementation("androidx.camera:camera-lifecycle:1.5.0")
+    implementation("androidx.camera:camera-video:1.5.0")
+    implementation("androidx.camera:camera-view:1.5.0")
+    implementation("androidx.camera:camera-extensions:1.5.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
+    implementation(platform("androidx.compose:compose-bom:2025.09.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("com.google.android.gms:play-services-location:21.3.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("com.google.android.play:integrity:1.4.0")
-    implementation("net.danlew:android.joda:2.12.6")
+    implementation("com.google.android.play:integrity:1.5.0")
+    implementation("net.danlew:android.joda:2.13.1")
     implementation("com.jakewharton.timber:timber:5.0.1")
-    implementation("androidx.test:core:1.6.1")
-    implementation("androidx.test:rules:1.6.1")
-    implementation("org.chromium.net:cronet-embedded:119.6045.31")
+    implementation("androidx.test:core:1.7.0")
+    implementation("androidx.test:rules:1.7.0")
     implementation("com.github.mik3y:usb-serial-for-android:3.8.0")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.03.00"))
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.09.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
